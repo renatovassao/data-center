@@ -158,4 +158,5 @@ SELECT t1.virtual_machine_id, t2.online AS server_status FROM virtual_machines t
 CREATE TEMP TABLE new_app_databases AS SELECT * FROM app_databases WHERE app_id > 3;
 CREATE TEMP TABLE database_ids AS SELECT database_id FROM databases;
 CREATE TEMP TABLE cross_app_databases AS SELECT * FROM (SELECT DISTINCT app_id FROM new_app_databases) AS app_ids CROSS JOIN database_ids;
-SELECT * FROM new_app_databases WHERE NOT EXISTS (SELECT * FROM cross_app_databases EXCEPT SELECT * FROM new_app_databases);
+CREATE TEMP TABLE not_in_all_dbs AS SELECT * FROM cross_app_databases EXCEPT SELECT * FROM new_app_databases;
+SELECT app_id FROM new_app_databases EXCEPT (SELECT DISTINCT app_id FROM not_in_all_dbs);
